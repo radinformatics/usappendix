@@ -22,7 +22,12 @@ files = [f for f in files if re.search(file_prefix,f)]
 # WordFish looks report_text and report_id for batch import
 subset = pandas.DataFrame()
 
-# This is a function to read the header
+
+########################################################################
+# SUPPORTING FUNCTIONS
+########################################################################
+
+
 def read_lines(input_file,mode='r',N=2):
     '''function to read raw lines for a header
     :param input_file: the input file to read
@@ -62,6 +67,11 @@ def apply_header(data,header):
         next_dx = next_dx + 1
     data.columns = header
     return data
+
+
+########################################################################
+# MAIN PARSING
+########################################################################
 
 
 for input_file in files:
