@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 import pandas
 from glob import glob
 import re
