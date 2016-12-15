@@ -18,8 +18,7 @@ os.chdir(data_dir)
 files = glob("*")
 files = [f for f in files if re.search(file_prefix,f)]
 
-# We want to keep the patient de-id, and the report itself
-# WordFish looks report_text and report_id for batch import
+# Start out by keeping whatever columns we find
 subset = pandas.DataFrame()
 
 
@@ -100,6 +99,11 @@ unique_records = len(subset['DE_PAT_ID'].unique())
 total_records = subset.shape[0]
 print('Found %s unique records, and %s total' %(unique_records,total_records))
 # Found 4930 unique records, and 5914 total
+
+# Here we need to identify duplicates, possibly filter,
+# and then subset columns to report id and report text
+# WordFish: report_text and report_id for batch import
+
 
 # Save file for now, may want to better format later
 subset.to_csv('records-US-APPENDIX.tsv',sep='\t')
