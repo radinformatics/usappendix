@@ -21,6 +21,9 @@ files = [f for f in files if re.search(file_prefix,f)]
 # Start out by keeping whatever columns we find
 subset = pandas.DataFrame()
 
+# repeats will store repeated entries (there are two files)
+repeats = pandas.DataFrame()
+
 
 ########################################################################
 # SUPPORTING FUNCTIONS
@@ -72,6 +75,8 @@ def apply_header(data,header):
 # MAIN PARSING
 ########################################################################
 
+# This file has errored transfer
+files = [x for x in files if x!='CLanglotz_finalrad1.TXT']
 
 for input_file in files:
     print("Adding records from %s..." %(input_file))
@@ -97,13 +102,23 @@ for input_file in files:
 # Are there duplicates, based on patient id?
 unique_records = len(subset['DE_PAT_ID'].unique())
 total_records = subset.shape[0]
-print('Found %s unique records, and %s total' %(unique_records,total_records))
-# Found 4930 unique records, and 5914 total
+print('Found %s unique patients, and %s total records' %(unique_records,total_records))
+# Found 4261 unique records, and 5914 total
 
-# Here we need to identify duplicates, possibly filter,
-# and then subset columns to report id and report text
-# WordFish: report_text and report_id for batch import
-
+# Now with the order id
+unique_records = len(subset['TRIM(ORDER_PROC_ID)'].unique())
+total_records = subset.shape[0]
+print('Found %s unique orders, and %s total' %(unique_records,total_records))
 
 # Save file for now, may want to better format later
 subset.to_csv('records-US-APPENDIX.tsv',sep='\t')
+
+# Remove duplicates
+cases = subset[subset.duplicated()==False]
+
+# Prepare for import into wordfish
+cases = cases.rename(index=str, columns={'TRIM(ORDER_PROC_ID)': "report_id", "REPORT": "report_text"})
+final = cases[['report_id','report_text']]
+
+# We will add labels manually (need way to do this)
+final.to_csv('stanford-US-APPENDIX.tsv',sep='\t',index=None)
